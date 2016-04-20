@@ -1,0 +1,64 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://commons.wikimedia.org/w/api.php?action=query&format=json&prop=images&titles=plaques
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.9.3
+      Date:
+      - Sat, 18 Jul 2015 10:43:00 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '125'
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - HHVM/3.6.1
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - private, must-revalidate, max-age=0
+      X-Frame-Options:
+      - SAMEORIGIN
+      Vary:
+      - Accept-Encoding,X-Forwarded-Proto,Cookie
+      X-Varnish:
+      - 1647509643, 2956078433, 4134796836
+      Via:
+      - 1.1 varnish, 1.1 varnish, 1.1 varnish
+      Accept-Ranges:
+      - bytes
+      Age:
+      - '0'
+      X-Cache:
+      - cp1068 miss (0), cp3014 miss (0), cp3005 frontend miss (0)
+      Strict-Transport-Security:
+      - max-age=31536000
+      Set-Cookie:
+      - GeoIP=GB:H9:London:51.5142:-0.0931:v4; Path=/; Domain=.wikimedia.org
+      - WMF-Last-Access=18-Jul-2015;Path=/;HttpOnly;Expires=Wed, 19 Aug 2015 00:00:00
+        GMT
+      X-Analytics:
+      - https=1
+    body:
+      encoding: UTF-8
+      string: '{"batchcomplete":"","query":{"normalized":[{"from":"plaques","to":"Plaques"}],"pages":{"2127987":{"pageid":2127987,"ns":0,"title":"Plaques"}}}}'
+    http_version: 
+  recorded_at: Sat, 18 Jul 2015 10:43:00 GMT
+recorded_with: VCR 2.9.3

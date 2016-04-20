@@ -1,5 +1,5 @@
 module Wikimedia
-  module Commoner
-    VERSION = "0.0.1"
+  class Commoner
+    VERSION = "1.0.0"
   end
 end

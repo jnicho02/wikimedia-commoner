@@ -1,0 +1,69 @@
+---
+http_interactions:
+- request:
+    method: get
+    uri: https://commons.wikimedia.org/w/api.php?action=opensearch&limit=100&search=Meles%20meles
+    body:
+      encoding: US-ASCII
+      string: ''
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Server:
+      - nginx/1.9.3
+      Date:
+      - Sat, 18 Jul 2015 10:42:55 GMT
+      Content-Type:
+      - application/json; charset=utf-8
+      Content-Length:
+      - '194'
+      Connection:
+      - keep-alive
+      X-Powered-By:
+      - HHVM/3.6.1
+      X-Content-Type-Options:
+      - nosniff
+      Cache-Control:
+      - max-age=10800, s-maxage=10800, public
+      X-Frame-Options:
+      - SAMEORIGIN
+      Vary:
+      - Accept-Encoding,X-Forwarded-Proto,Cookie
+      Expires:
+      - Sat, 18 Jul 2015 12:32:56 GMT
+      X-Varnish:
+      - 4036711077, 2953830170, 4134793608 4131062513
+      Via:
+      - 1.1 varnish, 1.1 varnish, 1.1 varnish
+      Accept-Ranges:
+      - bytes
+      Age:
+      - '4199'
+      X-Cache:
+      - cp1065 miss (0), cp3014 miss (0), cp3005 frontend hit (6)
+      Strict-Transport-Security:
+      - max-age=31536000
+      Set-Cookie:
+      - GeoIP=GB:H9:London:51.5142:-0.0931:v4; Path=/; Domain=.wikimedia.org
+      - WMF-Last-Access=18-Jul-2015;Path=/;HttpOnly;Expires=Wed, 19 Aug 2015 00:00:00
+        GMT
+      X-Analytics:
+      - https=1
+    body:
+      encoding: UTF-8
+      string: '["Meles meles",["Meles meles","Meles anakuma"],["Subspecies (for MSW):
+        M. meles meles, M. meles arcalus, M. meles canescens, M. meles heptneri, M.
+        meles marianensis, M.","Mammal Species of the World link: Meles anakuma Temminck,
+        1844"],["https://commons.wikimedia.org/wiki/Meles_meles","https://commons.wikimedia.org/wiki/Meles_anakuma"]]'
+    http_version: 
+  recorded_at: Sat, 18 Jul 2015 10:42:55 GMT
+recorded_with: VCR 2.9.3
