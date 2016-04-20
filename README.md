@@ -27,10 +27,9 @@ Or install it yourself as:
     $ gem install wikimedia-commoner
 
 ## Usage
-
+```
 require 'wikimedia/commoner'
-
-wikimedia = Wikimedia::Commoner.details(wikimedia_url)
+wikimedia = Wikimedia::Commoner.details("File:Ciconia_ciconia_-_01.jpg")
 wikimedia[:categories]
 wikimedia[:url]
 wikimedia[:page_url]
@@ -38,14 +37,17 @@ wikimedia[:description]
 wikimedia[:author]
 wikimedia[:author_url]
 wikimedia[:licence]
-wikimedia[:licence_url])
+wikimedia[:licence_url]
+wikimedia[:longitude]
+wikimedia[:latitude]
+wikimedia[:openplaques_id]
 
-Wikimedia::Commoner.search 'term'
+Wikimedia::Commoner.search 'badger'
 
-Wikimedia::Commoner.images 'term'
+Wikimedia::Commoner.images 'badger'
 
-Wikimedia::Commoner.categorised_images 'category'
-
+Wikimedia::Commoner.categorised_images 'Category:Badger Bus'
+```
 ## Contributing
 
 1. Fork it ( https://github.com/jnicho02/wikimedia-commoner/fork )
