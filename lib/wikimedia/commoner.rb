@@ -85,7 +85,11 @@ module Wikimedia
       end
       author_name = Sanitize.clean(author_name)
       author_name.gsub!('The original uploader was ','')
+      author_name.gsub!('Original uploader was ','')
       author_name.gsub!(' at English Wikipedia','')
+      author_name.gsub!(' at en.wikipedia','')
+      author_name.gsub!('Photograph by ','')
+      author_name.gsub!('Engraving by ','')
       author_url = ""
       au = doc.xpath('//span[@id="creator"]/*/a/@href')
       au = doc.xpath('//tr[td/@id="fileinfotpl_aut"]/td/a/@href') if au.empty?
