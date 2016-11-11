@@ -2,21 +2,28 @@ require 'spec_helper'
 
 describe Wikimedia::Commoner do
   describe 'doing a #search' do
+    
     context 'on an unknown term' do
+      let(:titles) {
+        VCR.use_cassette("searching/#{self.class.description}".gsub(" ","-")) {
+          Wikimedia::Commoner.search('badger')
+        }
+      }
       it 'should find nothing' do
-        VCR.use_cassette ('searching/' + self.class.description).gsub(" ","-") do
-          titles = Wikimedia::Commoner.search 'badger'
-          expect(titles).to eq([])
-        end
+        expect(titles).to eq([])
       end
     end
+
     context 'on a known term' do
+      let(:titles) {
+        VCR.use_cassette("searching/#{self.class.description}".gsub(" ","-")) {
+          Wikimedia::Commoner.search('Meles meles')
+        }
+      }
       it 'should find some titles' do
-        VCR.use_cassette ('searching/' + self.class.description).gsub(" ","-") do
-          titles = Wikimedia::Commoner.search 'Meles meles'
-          expect(titles.size).to be > 0
-        end
+        expect(titles.size).to be > 0
       end
     end
+
   end
 end

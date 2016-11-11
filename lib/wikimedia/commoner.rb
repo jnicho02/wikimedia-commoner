@@ -58,8 +58,9 @@ module Wikimedia
     end
 
     def details(title)
-      return nil if /File:.*/.match(title) == nil
-      title = /File:[^#]*/.match(title)[0]
+      m = /(File:[^#?]*)/.match(title)
+      return nil unless m
+      title = m[0]
       response = json_get(info_uri(title))
       return {} if response == nil
       pages = response['query']['pages'].map { |page_id, page| page }
