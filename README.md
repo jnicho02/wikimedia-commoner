@@ -1,6 +1,6 @@
 # Wikimedia::Commoner
 
-A Wikimedia Commons page holds more details than the api provides, e.g. the name of the copyright holder. This can be scraped from the html as a standard format is encouraged with mediawiki templates. It is not foolproof, but will work for most of the images.
+The Wikimedia Commons api does not provide everything that you need to display their images, e.g. the name of the copyright holder and the licence details. This gem scrapes the html to add to the api. It is not foolproof, but will work for most of the images.
 
 This gem is used by OpenPlaques.org to get hold of image links and appropriate copyright holder details so that an image can be legally displayed on a web page.
 
@@ -48,12 +48,19 @@ Wikimedia::Commoner.images 'badger'
 
 Wikimedia::Commoner.categorised_images 'Category:Badger Bus'
 ```
+
+You can try it with
+
+    $ rake console
+    > wikimedia = Wikimedia::Commoner.details("https://commons.wikimedia.org/wiki/File:Chongqing_Art_Museum.jpg")
+
 ## Contributing
 
 1. Fork it ( https://github.com/jnicho02/wikimedia-commoner/fork )
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create a new Pull Request
+4. Write some rspec (`rspec`). I won't accept anything without a test to demo it.
+5. Push to the branch (`git push origin my-new-feature`)
+6. Create a new Pull Request
 
-With thanks to Ross Cooperman for the inspiration with his 2013 commoner gem. I did try a pull request.
+Credit to Ross Cooperman for his 2013 commoner gem. I did try a pull request.
