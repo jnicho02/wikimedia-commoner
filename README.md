@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/jnicho02/wikimedia-commoner.svg?branch=master)](https://travis-ci.org/jnicho02/wikimedia-commoner)
+
 # Wikimedia::Commoner
 
 The Wikimedia Commons api does not provide everything that you need to display their images, e.g. the name of the copyright holder and the licence details. This gem scrapes the html to add to the api. It is not foolproof, but will work for most of the images.
