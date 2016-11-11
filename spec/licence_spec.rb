@@ -16,9 +16,9 @@ describe Wikimedia::Commoner do
 
     context 'of Nahal Zaror, south 11' do
       let(:image) {
-#        VCR.use_cassette("details/#{self.class.description}".gsub(" ","-")) {
+        VCR.use_cassette("details/#{self.class.description}".gsub(" ","-")) {
           Wikimedia::Commoner.details('File:Nahal_Zaror,_south_11.jpg')
-#        }
+        }
       }
       it 'should be CC BY-SA 3.0' do
         expect(image[:licence]).to eq('CC BY-SA 3.0')

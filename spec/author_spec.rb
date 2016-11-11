@@ -89,5 +89,20 @@ describe Wikimedia::Commoner do
       end
     end
 
+    context 'of Brammal Lane ground' do
+      let(:image) {
+        VCR.use_cassette("details/#{self.class.description}".gsub(" ","-")) {
+          Wikimedia::Commoner.details(' https://commons.wikimedia.org/wiki/Category:Bramall_Lane#/media/File:Bramall_Lane_End.jpg')
+        }
+      }
+      it 'should be Lewisskinner' do
+        expect(image[:author]).to eq('Lewisskinner')
+      end
+      it 'should link to Lewisskinner\'s Wikipedia page' do
+        expect(image[:author_url]).to eq('https://en.wikipedia.org/wiki/User:Lewisskinner')
+      end
+    end
+
+
   end
 end
