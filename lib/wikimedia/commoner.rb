@@ -62,17 +62,17 @@ module Wikimedia
       return nil unless m
       title = m[0]
       response = json_get(info_uri(title))
-      return {} if response == nil
+      return {} unless response
       pages = response['query']['pages'].map { |page_id, page| page }
       return { description: 'missing' } if pages.first['missing']!=nil
       categories = pages.first['categories'].map { |category| category['title'] }.flatten
       categories = categories.map { |category| category.gsub(/^Category:/, '') }
       descriptionurl = pages.first['imageinfo'].first['descriptionurl']
       licence = pages.first['imageinfo'].first['extmetadata']['LicenseShortName']['value']
-      licence_url = pages.first['imageinfo'].first['extmetadata']['LicenseUrl']['value'] if pages.first['imageinfo'].first['extmetadata']['LicenseUrl']
+      licence_url = pages.first['imageinfo'].first['extmetadata']['LicenseUrl']['value'].gsub('http:','https:') if pages.first['imageinfo'].first['extmetadata']['LicenseUrl']
       if categories.include? 'CC-PD-Mark'
         licence = 'CC-PD-Mark'
-        licence_url = 'http://creativecommons.org/publicdomain/mark/1.0'
+        licence_url = 'https://creativecommons.org/publicdomain/mark/1.0'
       end
       licence_url = 'https://en.wikipedia.org/wiki/Public_domain' if licence == 'Public domain' && licence_url == nil
       party = HTTParty.get(descriptionurl, :verify => false)
@@ -88,7 +88,7 @@ module Wikimedia
       au = doc.xpath('//span[@id="creator"]/*/a/@href')
       au = doc.xpath('//tr[td/@id="fileinfotpl_aut"]/td/a/@href') if au.empty?
       author_url = au[0].content if !au.empty? && au.size > 0
-      author_url = "http://commons.wikimedia.org" + author_url if author_url.start_with?('/wiki/User:')
+      author_url = "https://commons.wikimedia.org" + author_url if author_url.start_with?('/wiki/User:')
       description = ""
       description_element = doc.xpath('//td[@class="description"]')
       description = Sanitize.clean(description_element[0].content)[0,255].strip! if description_element.size > 0

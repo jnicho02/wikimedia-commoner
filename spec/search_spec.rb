@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Wikimedia::Commoner do
   describe 'doing a #search' do
-    
+
     context 'on an unknown term' do
       let(:titles) {
         VCR.use_cassette("searching/#{self.class.description}".gsub(" ","-")) {

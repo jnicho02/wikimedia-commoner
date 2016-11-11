@@ -2,7 +2,7 @@ require 'spec_helper'
 
 describe Wikimedia::Commoner do
   describe 'the #author' do
-    
+
     context 'of a Delhi portrait of a man' do
       let(:image) {
         VCR.use_cassette("details/#{self.class.description}".gsub(" ","-")) {
@@ -24,7 +24,7 @@ describe Wikimedia::Commoner do
         expect(image[:author]).to eq('Daniel Baránek')
       end
       it 'should link to Daniel Baránek\'s wikimedia user page' do
-        expect(image[:author_url]).to eq('http://commons.wikimedia.org/wiki/User:Daniel_Bar%C3%A1nek')
+        expect(image[:author_url]).to eq('https://commons.wikimedia.org/wiki/User:Daniel_Bar%C3%A1nek')
       end
     end
 
