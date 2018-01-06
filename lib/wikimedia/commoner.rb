@@ -94,8 +94,8 @@ module Wikimedia
       description = Sanitize.clean(description_element[0].content)[0,255].strip! if description_element.size > 0
 
       geohack = doc.xpath("//a[contains(@href, 'tools.wmflabs.org/geohack')]/@href")
-      longitude = geohack[0] ? /params=.*_[NS]_(-*\d*.\d*)/.match(geohack[0].value)[1] : nil
-      latitude = geohack[0] ? /params=(\d*.\d*)/.match(geohack[0].value)[1] : nil
+      longitude = geohack[0] ? /params=.*_[NS]_(-*\d*.\d*)/.match(geohack[0].value)[1].to_f.to_s : nil
+      latitude = geohack[0] ? /params=(\d*.\d*)/.match(geohack[0].value)[1].to_f.to_s : nil
 
       openplaques_url = doc.xpath("//a[contains(@href, 'openplaques.org/plaques')]/@href")
       openplaques_id = openplaques_url[0] ? /plaques\/(\d*)/.match(openplaques_url[0].value)[1] : nil
