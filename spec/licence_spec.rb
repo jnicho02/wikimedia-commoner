@@ -57,7 +57,7 @@ describe Wikimedia::Commoner do
         }
       }
       it 'should be CC-PD-Mark' do
-        expect(image[:licence]).to eq('CC-PD-Mark')
+        expect(image[:licence]).to eq('Public domain')
       end
       it 'should link to the public domain licence page' do
         expect(image[:licence_url]).to eq('https://creativecommons.org/publicdomain/mark/1.0')

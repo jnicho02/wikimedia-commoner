@@ -4,6 +4,10 @@ require 'sanitize'
 
 module Wikimedia
   class Commoner
+    def initialize(base_uri = nil)
+      @uri = (base_uri) ? base_uri : default_uri
+    end
+
     def self.search(query)
       new.search(query)
     end
@@ -19,10 +23,6 @@ module Wikimedia
     def self.details(title)
       title = URI.unescape title
       new.details(title)
-    end
-
-    def initialize(base_uri = nil)
-      @uri = (base_uri) ? base_uri : default_uri
     end
 
     def search(query)
@@ -47,13 +47,29 @@ module Wikimedia
       images = response['query']['categorymembers']
       if images!=[nil]
         titles = images.flatten.map { |image| image['title'] }
-        titles.map do |title|
+        titles.map { |title|
           if title.start_with?('Category:')
             categorised_images(title)
           else
             details(title)
           end
-        end
+        }
+      end
+    end
+
+    def pages(category)
+      # get a list of titles for the given term
+      response = json_get(category_uri(category))
+      pages = response['query']['categorymembers']
+      if pages!=[nil]
+        titles = pages.flatten.map { |page| page['title'] }
+        titles.map { |title|
+          if title.start_with?('Category:')
+            pages(title)
+          else
+            details(title)
+          end
+        }
       end
     end
 
@@ -67,14 +83,25 @@ module Wikimedia
       return { description: 'missing' } if pages.first['missing']!=nil
       categories = pages.first['categories'].map { |category| category['title'] }.flatten
       categories = categories.map { |category| category.gsub(/^Category:/, '') }
-      descriptionurl = pages.first['imageinfo'].first['descriptionurl']
-      licence = pages.first['imageinfo'].first['extmetadata']['LicenseShortName']['value']
-      licence_url = pages.first['imageinfo'].first['extmetadata']['LicenseUrl']['value'].gsub('http:','https:') if pages.first['imageinfo'].first['extmetadata']['LicenseUrl']
-      if categories.include? 'CC-PD-Mark'
-        licence = 'CC-PD-Mark'
+      descriptionurl = pages.first['imageinfo']&.first['descriptionurl']
+      extmetadata = pages.first['imageinfo']&.first['extmetadata']
+      if extmetadata
+        licence = extmetadata['LicenseShortName']['value'] if extmetadata['LicenseShortName']
+        licence_url = extmetadata['LicenseUrl']['value'].gsub('http:','https:') if extmetadata['LicenseUrl']
+      end
+      unless licence
+        if categories.include? 'CC-PD-Mark'
+          licence = 'CC-PD-Mark'
+          licence_url = 'https://creativecommons.org/publicdomain/mark/1.0'
+        end
+        if categories.include? 'CC-BY-SA-4.0'
+          licence = 'CC-BY-SA-4.0'
+          licence_url = 'https://creativecommons.org/licenses/by-sa/4.0'
+        end
+      end
+      if licence == 'Public domain' && licence_url == nil
         licence_url = 'https://creativecommons.org/publicdomain/mark/1.0'
       end
-      licence_url = 'https://en.wikipedia.org/wiki/Public_domain' if licence == 'Public domain' && licence_url == nil
       party = HTTParty.get(descriptionurl, :verify => false)
       doc = Nokogiri::HTML(party.to_s)
       an = doc.xpath('//span[@id="creator"]')
@@ -84,18 +111,20 @@ module Wikimedia
         author_name = an[1].content if !an.empty? && an.size > 0
       end
       author_name = Sanitize.clean(author_name)
+      author_url = ''
       author_name.gsub!('The original uploader was ','')
       author_name.gsub!('Original uploader was ','')
       author_name.gsub!(' at English Wikipedia','')
       author_name.gsub!(' at en.wikipedia','')
       author_name.gsub!('Photograph by ','')
       author_name.gsub!('Engraving by ','')
-      author_url = ""
       au = doc.xpath('//span[@id="creator"]/*/a/@href')
       au = doc.xpath('//tr[td/@id="fileinfotpl_aut"]/td/a/@href') if au.empty?
       author_url = au[0].content if !au.empty? && au.size > 0
-      author_url = "https://commons.wikimedia.org" + author_url if author_url.start_with?('/wiki/User:')
-      description = ""
+      if author_url.start_with?('/wiki/User:')
+        author_url = "https://commons.wikimedia.org#{author_url}"
+      end
+      description = ''
       description_element = doc.xpath('//td[@class="description"]')
       description = Sanitize.clean(description_element[0].content)[0,255].strip! if description_element.size > 0
 
@@ -106,7 +135,7 @@ module Wikimedia
       openplaques_url = doc.xpath("//a[contains(@href, 'openplaques.org/plaques')]/@href")
       openplaques_id = openplaques_url[0] ? /plaques\/(\d*)/.match(openplaques_url[0].value)[1] : nil
 
-      page_url = "https://commons.wikimedia.org/wiki/"+title
+      page_url = "https://commons.wikimedia.org/wiki/#{title}"
       {
         categories:  categories,
         url:         pages.first['imageinfo'].first['url'],
@@ -154,7 +183,7 @@ module Wikimedia
       end
 
       def default_uri
-        @default_uri ||= "https://commons.wikimedia.org/w/api.php"
+        @default_uri ||= 'https://commons.wikimedia.org/w/api.php'
       end
 
     end
