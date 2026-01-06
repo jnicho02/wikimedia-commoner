@@ -1,10 +1,8 @@
-[![Build Status](https://travis-ci.org/jnicho02/wikimedia-commoner.svg?branch=master)](https://travis-ci.org/jnicho02/wikimedia-commoner)
-
 # Wikimedia::Commoner
 
-The Wikimedia Commons api does not provide everything that you need to display their images, e.g. the name of the copyright holder and the licence details. This gem scrapes the html to add to the api. It is not foolproof, but will work for most of the images.
+The Wikimedia Commons API does not provide everything that you need to display their images, e.g. the name of the copyright holder and the licence details. This gem scrapes the html to add to the aAPI results. It is not foolproof, but will work for most of the images.
 
-This gem is used by OpenPlaques.org to get hold of image links and appropriate copyright holder details so that an image can be legally displayed on a web page.
+This gem is used by OpenPlaques.org so that an image can be legally displayed on a web page.
 
 The idea is that users can copy and paste any Wikimedia filename to your system and you can get the details. It looks for anything with 'File:' in the url, so can cope with different formats coming from preview urls, etc.:
 * https://commons.wikimedia.org/wiki/File:Ciconia_ciconia_-_01.jpg
@@ -30,7 +28,6 @@ Or install it yourself as:
 
 ## Usage
 ```
-require 'wikimedia/commoner'
 wikimedia = Wikimedia::Commoner.details("File:Ciconia_ciconia_-_01.jpg")
 wikimedia[:categories]
 wikimedia[:url]
@@ -43,6 +40,8 @@ wikimedia[:licence_url]
 wikimedia[:longitude]
 wikimedia[:latitude]
 wikimedia[:openplaques_id]
+
+wikimedia = Wikimedia::Commoner.details("https://commons.wikimedia.org/wiki/File:Lawrence_of_Arabia_Blue_Plaque,_Turnchapel.jpg")
 
 Wikimedia::Commoner.search 'badger'
 

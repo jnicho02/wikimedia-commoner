@@ -2,10 +2,9 @@ require 'spec_helper'
 
 describe Wikimedia::Commoner do
   describe 'listing the #images' do
-
     context 'of a known term' do
       let(:images) {
-        VCR.use_cassette("images/#{self.class.description}".gsub(" ","-")) {
+        VCR.use_cassette("images/#{self.class.description}".gsub(" ", "-")) {
           Wikimedia::Commoner.images('Meles meles')
         }
       }
@@ -16,7 +15,7 @@ describe Wikimedia::Commoner do
 
     context 'of an unknown term' do
       let(:images) {
-        VCR.use_cassette("images/#{self.class.description}".gsub(" ","-")) {
+        VCR.use_cassette("images/#{self.class.description}".gsub(" ", "-")) {
           Wikimedia::Commoner.images('plaques')
         }
       }
@@ -24,6 +23,5 @@ describe Wikimedia::Commoner do
         expect(images).to be_nil
       end
     end
-
   end
 end
