@@ -2,7 +2,6 @@ require 'spec_helper'
 
 describe Wikimedia::Commoner do
   describe 'graphing OSM' do
-
     context 'categorised_images' do
       let(:images) {
         wc = Wikimedia::Commoner.new('https://wiki.openstreetmap.org/w/api.php')
@@ -13,6 +12,5 @@ describe Wikimedia::Commoner do
         expect(images).to be
       end
     end
-
   end
 end

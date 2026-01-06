@@ -2,10 +2,9 @@ require 'spec_helper'
 
 describe Wikimedia::Commoner do
   describe 'the #geolocation' do
-
     context 'the Kiln plaque' do
       let(:image) {
-        VCR.use_cassette("details/#{self.class.description}".gsub(" ","-")) {
+        VCR.use_cassette("details/#{self.class.description}".gsub(" ", "-")) {
           Wikimedia::Commoner.details('https://commons.wikimedia.org/wiki/File:The_Kiln_plaque.jpg')
         }
       }
@@ -16,6 +15,5 @@ describe Wikimedia::Commoner do
         expect(image[:longitude]).to eq('-0.211511')
       end
     end
-
   end
 end
