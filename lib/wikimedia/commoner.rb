@@ -9,36 +9,22 @@ module Wikimedia
       @uri = (base_uri) ? base_uri : default_uri
     end
 
-    def self.search(query)
-      new.search(query)
-    end
+    class << self
+      def categorised_images(term)
+        new.categorised_images(term)
+      end
 
-    def self.images(term)
-      new.images(term)
-    end
+      def details(title)
+        title = URI.decode_www_form_component title
+        new.details(title)
+      end
 
-    def self.categorised_images(term)
-      new.categorised_images(term)
-    end
+      def images(term)
+        new.images(term)
+      end
 
-    def self.details(title)
-      title = URI.decode_www_form_component title
-      new.details(title)
-    end
-
-    def search(query)
-      json_get(search_uri(query))[1]
-    end
-
-    def images(term)
-      # get a list of titles for the given term
-      response = json_get(query_uri(term))
-      images = response["query"]["pages"].map { |page_id, page| page["images"] }
-      if images != [ nil ]
-        titles = images.flatten.map { |image| image["title"] }
-        titles.map do |title|
-          details(title)
-        end
+      def search(query)
+        new.search(query)
       end
     end
 
@@ -51,22 +37,6 @@ module Wikimedia
         titles.map { |title|
           if title.start_with?("Category:")
             categorised_images(title)
-          else
-            details(title)
-          end
-        }
-      end
-    end
-
-    def pages(category)
-      # get a list of titles for the given term
-      response = json_get(category_uri(category))
-      pages = response["query"]["categorymembers"]
-      if pages!=[ nil ]
-        titles = pages.flatten.map { |page| page["title"] }
-        titles.map { |title|
-          if title.start_with?("Category:")
-            pages(title)
           else
             details(title)
           end
@@ -109,18 +79,19 @@ module Wikimedia
       party = HTTParty.get(descriptionurl, verify: false)
       doc = Nokogiri::HTML(party.to_s)
       an = doc.xpath('//span[@id="creator"]')
-      author_name = an.empty? ? "" : an[0].content
+      author = an.empty? ? "" : an[0].content
       if an.empty?
         an = doc.xpath('//tr[td/@id="fileinfotpl_aut"]/td')
-        author_name = an[1].content if !an.empty? && an.size > 0
+        author = an[1].content if !an.empty? && an.size > 0
       end
-      author_name = Sanitize.fragment(author_name)
-      author_name.gsub!("The original uploader was ", "")
-      author_name.gsub!("Original uploader was ", "")
-      author_name.gsub!(" at English Wikipedia", "")
-      author_name.gsub!(" at en.wikipedia", "")
-      author_name.gsub!("Photograph by ", "")
-      author_name.gsub!("Engraving by ", "")
+      author = Sanitize.fragment(author)
+      author.gsub!("\n", "")
+      author.gsub!("The original uploader was ", "")
+      author.gsub!("Original uploader was ", "")
+      author.gsub!(" at English Wikipedia", "")
+      author.gsub!(" at en.wikipedia", "")
+      author.gsub!("Photograph by ", "")
+      author.gsub!("Engraving by ", "")
       author_url = ""
       au = doc.xpath('//span[@id="creator"]/*/a/@href')
       au = doc.xpath('//tr[td/@id="fileinfotpl_aut"]/td/a/@href') if au.empty?
@@ -134,31 +105,75 @@ module Wikimedia
 
       longitude = doc.xpath("//a[contains(@class, 'mw-kartographer-maplink')]/@data-lon")[0]&.value
       latitude = doc.xpath("//a[contains(@class, 'mw-kartographer-maplink')]/@data-lat")[0]&.value
-      wkt = "POINT(#{longitude} #{latitude})"
+      wkt = longitude ? "POINT(#{longitude} #{latitude})" : nil
 
       openplaques_url = doc.xpath("//a[contains(@href, 'openplaques.org/plaques')]/@href")
       openplaques_id = openplaques_url[0] ? /plaques\/(\d*)/.match(openplaques_url[0].value)[1] : nil
 
       url = pages.first["imageinfo"].first["url"]
-
       page_url = "https://commons.wikimedia.org/wiki/#{title}"
+
       {
-        categories:  categories,
-        url:         url,
-        page_url:    page_url,
+        author: author,
+        author_url: author_url,
+        categories: categories,
         description: description,
-        author:      author_name,
-        author_url:  author_url,
-        licence:     licence,
+        latitude: latitude,
+        licence: licence,
         licence_url: licence_url,
-        longitude:   longitude,
-        latitude:    latitude,
+        longitude: longitude,
         openplaques_id: openplaques_id,
+        page_url: page_url,
+        url: url,
         wkt: wkt
       }
     end
 
+    def images(term)
+      # get a list of titles for the given term
+      response = json_get(query_uri(term))
+      images = response["query"]["pages"].map { |page_id, page| page["images"] }
+      if images != [ nil ]
+        titles = images.flatten.map { |image| image["title"] }
+        titles.map do |title|
+          details(title)
+        end
+      end
+    end
+
+    def pages(category)
+      # get a list of titles for the given term
+      response = json_get(category_uri(category))
+      pages = response["query"]["categorymembers"]
+      if pages!=[ nil ]
+        titles = pages.flatten.map { |page| page["title"] }
+        titles.map { |title|
+          if title.start_with?("Category:")
+            pages(title)
+          else
+            details(title)
+          end
+        }
+      end
+    end
+
+    def search(query)
+      json_get(search_uri(query))[1]
+    end
+
     private
+
+      def category_uri(term)
+        uri_for action: "query", list: "categorymembers", format: "json", cmtitle: term
+      end
+
+      def default_uri
+        @default_uri ||= "https://commons.wikimedia.org/w/api.php"
+      end
+
+      def info_uri(image)
+        uri_for action: "query", titles: image, prop: "imageinfo|categories", iiprop: "url|extmetadata", format: "json"
+      end
 
       def json_get(uri)
         response = HTTParty.get(uri, verify: false)
@@ -169,28 +184,16 @@ module Wikimedia
         end
       end
 
-      def uri_for(params)
-        "#{@uri}?#{URI.encode_www_form(params)}"
+      def query_uri(term)
+        uri_for action: "query", titles: term, prop: "images", format: "json"
       end
 
       def search_uri(query)
         uri_for action: "opensearch", search: query, limit: 100
       end
 
-      def query_uri(term)
-        uri_for action: "query", titles: term, prop: "images", format: "json"
-      end
-
-      def info_uri(image)
-        uri_for action: "query", titles: image, prop: "imageinfo|categories", iiprop: "url|extmetadata", format: "json"
-      end
-
-      def category_uri(term)
-        uri_for action: "query", list: "categorymembers", format: "json", cmtitle: term
-      end
-
-      def default_uri
-        @default_uri ||= "https://commons.wikimedia.org/w/api.php"
+      def uri_for(params)
+        "#{@uri}?#{URI.encode_www_form(params)}"
       end
   end
 end

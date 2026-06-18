@@ -12,6 +12,26 @@
         "reveal": "always",
         "panel": "new"
       }
+    },
+    {
+      "label": "wc: rubocop",
+      "type": "shell",
+      "command": "rubocop",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
+    },
+    {
+      "label": "wc: test",
+      "type": "shell",
+      "command": "rspec",
+      "group": "test",
+      "presentation": {
+        "reveal": "always",
+        "panel": "new"
+      }
     }
   ]
 }
